@@ -1,0 +1,53 @@
+{
+	"name": "processStateData",
+	"properties": {
+		"description": "Process State Data",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "stateList",
+						"type": "DatasetReference"
+					},
+					"name": "csvState"
+				},
+				{
+					"dataset": {
+						"referenceName": "Neosalpha",
+						"type": "DatasetReference"
+					},
+					"name": "sqlStateCountry"
+				},
+				{
+					"dataset": {
+						"referenceName": "Neosalpha",
+						"type": "DatasetReference"
+					},
+					"name": "sqlCountry"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Neosalpha",
+						"type": "DatasetReference"
+					},
+					"name": "LoadStateData"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CheckStateExistsinSQLOrNot"
+				},
+				{
+					"name": "JoinWithCountryTable"
+				},
+				{
+					"name": "MatchWithCountryExistsinSQL"
+				}
+			],
+			"script": "source(output(\n\t\tStateName as string,\n\t\tCountryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> csvState\nsource(output(\n\t\tstateID as long,\n\t\tstateName as string,\n\t\tcountryID as long,\n\t\tcountryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: '  SELECT [stateID],[stateName],C.countryID,C.countryName FROM [dbo].[TState] S\\n  INNER JOIN [dbo].[TCountry] C ON S.countryID=C.countryID',\n\tformat: 'query') ~> sqlStateCountry\nsource(output(\n\t\tcountryID as long,\n\t\tcountryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT countryID,countryName FROM [dbo].[TCountry]',\n\tformat: 'query') ~> sqlCountry\ncsvState, sqlStateCountry exists(csvState@StateName == sqlStateCountry@stateName\n\t&& csvState@CountryName == sqlStateCountry@countryName,\n\tnegate:true,\n\tbroadcast: 'auto')~> CheckStateExistsinSQLOrNot\nCheckStateExistsinSQLOrNot, sqlCountry join(csvState@CountryName == sqlCountry@countryName,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> JoinWithCountryTable\nJoinWithCountryTable filter(iif(isNull(countryID), 0, 1)!=0) ~> MatchWithCountryExistsinSQL\nMatchWithCountryExistsinSQL sink(input(\n\t\tstateID as long,\n\t\tstateName as string,\n\t\tcountryID as long,\n\t\trowID as string,\n\t\tcreatedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> LoadStateData"
+		}
+	}
+}
