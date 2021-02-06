@@ -1,0 +1,33 @@
+{
+	"name": "stateList",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NeosalphaBlob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "StateData.csv",
+				"folderPath": "State",
+				"container": "adf"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "StateName",
+				"type": "String"
+			},
+			{
+				"name": "CountryName",
+				"type": "String"
+			}
+		]
+	}
+}
