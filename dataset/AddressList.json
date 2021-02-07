@@ -1,0 +1,53 @@
+{
+	"name": "AddressList",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NeosalphaBlob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Address.csv",
+				"folderPath": "Address",
+				"container": "adf"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "String"
+			},
+			{
+				"name": "AddressLine1",
+				"type": "String"
+			},
+			{
+				"name": "AddressLine2",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "StateProvince",
+				"type": "String"
+			},
+			{
+				"name": "CountryRegion",
+				"type": "String"
+			},
+			{
+				"name": "PostalCode",
+				"type": "String"
+			}
+		]
+	}
+}

@@ -1,0 +1,47 @@
+{
+	"name": "stgTAddress",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NeosalphaDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AddressLine1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AddressLine2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StateProvince",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CountryRegion",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PostalCode",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Stg_Address"
+		}
+	}
+}
