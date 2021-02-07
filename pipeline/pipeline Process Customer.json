@@ -1,0 +1,7 @@
+{
+	"name": "pipeline Process Customer",
+	"properties": {
+		"description": "Process Customer",
+		"annotations": []
+	}
+}
