@@ -1,0 +1,41 @@
+{
+	"name": "TState",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NeosalphaDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "stateID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "stateName",
+				"type": "varchar"
+			},
+			{
+				"name": "countryID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "rowID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "createdDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TState"
+		}
+	}
+}
