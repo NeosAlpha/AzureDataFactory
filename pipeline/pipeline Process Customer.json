@@ -54,8 +54,8 @@
 				}
 			},
 			{
-				"name": "ForEach",
-				"type": "ForEach",
+				"name": "Copy data From blob to SQL",
+				"type": "Copy",
 				"dependsOn": [
 					{
 						"activity": "Set File Name",
@@ -64,156 +64,144 @@
 						]
 					}
 				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@activity('Get Metadata').output",
-						"type": "Expression"
-					},
-					"activities": [
-						{
-							"name": "Copy Address Data",
-							"type": "Copy",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "Address",
+							"wildcardFileName": {
+								"value": "@activity('Get Metadata').output.ItemName",
+								"type": "Expression"
 							},
-							"userProperties": [],
-							"typeProperties": {
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "Truncate table [Stg_Address]",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
 								"source": {
-									"type": "DelimitedTextSource",
-									"storeSettings": {
-										"type": "AzureBlobStorageReadSettings",
-										"recursive": true,
-										"wildcardFolderPath": "Address",
-										"wildcardFileName": {
-											"value": "@item()",
-											"type": "Expression"
-										},
-										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "DelimitedTextReadSettings"
-									}
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
 								},
 								"sink": {
-									"type": "AzureSqlSink"
-								},
-								"enableStaging": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"mappings": [
-										{
-											"source": {
-												"name": "CustomerID",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "CustomerID",
-												"type": "Int32",
-												"physicalType": "int"
-											}
-										},
-										{
-											"source": {
-												"name": "AddressLine1",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "AddressLine1",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "AddressLine2",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "AddressLine2",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "City",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "City",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "StateProvince",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "StateProvince",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "CountryRegion",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "CountryRegion",
-												"type": "Int64",
-												"physicalType": "bigint"
-											}
-										},
-										{
-											"source": {
-												"name": "PostalCode",
-												"type": "String",
-												"physicalType": "String"
-											},
-											"sink": {
-												"name": "PostalCode",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										}
-									],
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
 								}
 							},
-							"inputs": [
-								{
-									"referenceName": "AddressList",
-									"type": "DatasetReference"
+							{
+								"source": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "nvarchar"
 								}
-							],
-							"outputs": [
-								{
-									"referenceName": "stgTAddress",
-									"type": "DatasetReference"
+							},
+							{
+								"source": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "nvarchar"
 								}
-							]
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "StateProvince",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "StateProvince",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CountryRegion",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CountryRegion",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PostalCode",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
 						}
-					]
-				}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AddressList",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "stgTAddress",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"variables": {
